@@ -9,7 +9,7 @@ export default function loadConfig(): void {
 
   if (result.error) {
     throw new Error(
-      `Failed to load .env file from path ${envPath}: ${result.error.message}`,
+      `Failed to load .env file from path ${envPath}: ${result.error.message}`
     );
   }
 
