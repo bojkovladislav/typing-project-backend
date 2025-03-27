@@ -1,7 +1,6 @@
 import fastify from 'fastify';
 import pino from 'pino';
 import userRouter from './routes/user.router';
-import postRouter from './routes/post.router';
 import loadConfig from './config/env.config';
 import { utils } from './utils';
 import formbody from '@fastify/formbody';
@@ -25,7 +24,6 @@ const startServer = async () => {
 
   // Register routes
   server.register(userRouter, { prefix: '/api/user' });
-  server.register(postRouter, { prefix: '/api/post' });
 
   // Set error handler
   server.setErrorHandler((error, _request, reply) => {

@@ -1,5 +1,5 @@
 import path from 'path';
-import Joi from 'joi';
+import * as yup from 'yup';
 import dotenv from 'dotenv';
 
 export default function loadConfig(): void {
@@ -13,22 +13,27 @@ export default function loadConfig(): void {
     );
   }
 
-  const schema = Joi.object({
-    NODE_ENV: Joi.string()
-      .valid('development', 'testing', 'production')
+  const schema = yup.object({
+    NODE_ENV: yup
+      .string()
+      .oneOf(['development', 'testing', 'production'])
       .required(),
-    LOG_LEVEL: Joi.string()
-      .valid('debug', 'info', 'warn', 'error', 'fatal')
+    LOG_LEVEL: yup
+      .string()
+      .oneOf(['debug', 'info', 'warn', 'error', 'fatal'])
       .required(),
-    API_HOST: Joi.string().required(),
-    API_PORT: Joi.string().required(),
-    DATABASE_URL: Joi.string().required(),
-    APP_JWT_SECRET: Joi.string().required(),
-  }).unknown(true);
+    API_HOST: yup.string().required(),
+    API_PORT: yup.string().required(),
+    DATABASE_URL: yup.string().required(),
+    APP_JWT_SECRET: yup.string().required(),
+  });
 
-  const { error } = schema.validate(process.env, { abortEarly: false });
-
-  if (error) {
-    throw new Error(`Config validation error: ${error.message}`);
+  try {
+    schema.validateSync(process.env, { abortEarly: false });
+  } catch (error) {
+    if (error instanceof yup.ValidationError) {
+      throw new Error(`Config validation error: ${error.errors.join(', ')}`);
+    }
+    throw error;
   }
 }

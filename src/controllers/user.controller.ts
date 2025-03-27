@@ -10,7 +10,7 @@ export const login = async (
   request: FastifyRequest<{
     Body: IUserLoginDto;
   }>,
-  reply: FastifyReply,
+  reply: FastifyReply
 ) => {
   try {
     const { email, password } = request.body;
@@ -33,7 +33,7 @@ export const login = async (
         id: user.id,
         email: user.email,
       },
-      process.env.APP_JWT_SECRET as string,
+      process.env.APP_JWT_SECRET as string
     );
 
     return reply.code(STANDARD.OK.statusCode).send({
@@ -49,10 +49,10 @@ export const signUp = async (
   request: FastifyRequest<{
     Body: IUserSignupDto;
   }>,
-  reply: FastifyReply,
+  reply: FastifyReply
 ) => {
   try {
-    const { email, password, firstName, lastName } = request.body;
+    const { email, password, username } = request.body;
     const user = await prisma.user.findUnique({ where: { email } });
     if (user) {
       return reply.code(ERRORS.userExists.statusCode).send(ERRORS.userExists);
@@ -62,8 +62,7 @@ export const signUp = async (
     const createUser = await prisma.user.create({
       data: {
         email,
-        first_name: firstName.trim(),
-        last_name: lastName.trim(),
+        username: username.trim(),
         password: String(hashPass),
       },
     });
@@ -73,7 +72,7 @@ export const signUp = async (
         id: createUser.id,
         email: createUser.email,
       },
-      process.env.APP_JWT_SECRET as string,
+      process.env.APP_JWT_SECRET as string
     );
 
     delete createUser.password;

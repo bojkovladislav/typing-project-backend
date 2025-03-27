@@ -1,7 +1,7 @@
 import * as bcrypt from 'bcryptjs';
 import { PrismaClient } from '@prisma/client';
 import * as JWT from 'jsonwebtoken';
-import Joi from 'joi';
+import * as yup from 'yup';
 import { FastifyReply, FastifyRequest } from 'fastify';
 
 export const prisma = new PrismaClient();
@@ -50,7 +50,7 @@ export const utils = {
   },
 
   getTokenFromHeader: (
-    authorizationHeader: string | undefined,
+    authorizationHeader: string | undefined
   ): string | null => {
     if (!authorizationHeader) return null;
     const token = authorizationHeader.replace('Bearer ', '');
@@ -65,26 +65,35 @@ export const utils = {
     }
   },
 
-  validateSchema: (schema: Joi.ObjectSchema) => {
+  validateSchema: (schema: yup.ObjectSchema<any>) => {
     return (data: any) => {
-      const { error } = schema.validate(data);
-      if (error) {
-        throw new Error(error.details[0].message);
+      try {
+        schema.validateSync(data, { abortEarly: false });
+      } catch (error) {
+        if (error instanceof yup.ValidationError) {
+          throw new Error(error.errors.join(', '));
+        }
+        throw error;
       }
     };
   },
 
-  preValidation: (schema: Joi.ObjectSchema) => {
+  preValidation: (schema: yup.ObjectSchema<any>) => {
     return (
       request: FastifyRequest,
       reply: FastifyReply,
-      done: (err?: Error) => void,
+      done: (err?: Error) => void
     ) => {
-      const { error } = schema.validate(request.body);
-      if (error) {
-        return done(error);
+      try {
+        schema.validateSync(request.body, { abortEarly: false });
+        done();
+      } catch (error) {
+        if (error instanceof yup.ValidationError) {
+          done(new Error(error.errors.join(', ')));
+        } else {
+          done(error);
+        }
       }
-      done();
     };
   },
 };

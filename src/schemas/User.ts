@@ -1,4 +1,4 @@
-import Joi from 'joi';
+import * as yup from 'yup';
 
 export interface IUserLoginDto {
   email: string;
@@ -11,13 +11,13 @@ export interface IUserSignupDto {
   password: string;
 }
 
-export const loginSchema = Joi.object({
-  email: Joi.string().email().required(),
-  password: Joi.string().min(8).required(),
+export const loginSchema = yup.object({
+  email: yup.string().email().required(),
+  password: yup.string().min(8).required(),
 });
 
-export const signupSchema = Joi.object({
-  email: Joi.string().email().required(),
-  password: Joi.string().min(8).required(),
-  username: Joi.string(),
+export const signupSchema = yup.object({
+  email: yup.string().email().required(),
+  password: yup.string().min(8).required(),
+  username: yup.string().required(),
 });

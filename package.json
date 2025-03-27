@@ -29,9 +29,9 @@
     "dotenv": "^16.4.5",
     "dotenv-cli": "^7.4.2",
     "fastify": "^4.28.1",
-    "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
-    "pino": "^9.2.0"
+    "pino": "^9.2.0",
+    "yup": "^1.6.1"
   },
   "devDependencies": {
     "@types/bcryptjs": "~2.4.6",
