@@ -1,2 +1,1 @@
-**Backend side for typing project[https://github.com/bojkovladislav/typing-project]
-**
+**Backend side for typing project[https://github.com/bojkovladislav/typing-project]**
