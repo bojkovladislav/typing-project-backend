@@ -22,7 +22,7 @@ async function userRouter(fastify: FastifyInstance) {
       },
       preValidation: utils.preValidation(loginSchema),
     },
-    controllers.login,
+    controllers.login
   );
 
   fastify.post(
@@ -31,12 +31,11 @@ async function userRouter(fastify: FastifyInstance) {
       schema: {
         body: {
           type: 'object',
-          required: ['email', 'password'],
+          required: ['username', 'email', 'password'],
           properties: {
+            username: { type: 'string', minLength: 5 },
             email: { type: 'string', format: 'email' },
             password: { type: 'string', minLength: 8 },
-            firstName: { type: 'string' },
-            lastName: { type: 'string' },
           },
         },
       },
@@ -45,7 +44,7 @@ async function userRouter(fastify: FastifyInstance) {
       },
       preValidation: utils.preValidation(signupSchema),
     },
-    controllers.signUp,
+    controllers.signUp
   );
 }
 

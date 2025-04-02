@@ -14,7 +14,9 @@ export const login = async (
 ) => {
   try {
     const { email, password } = request.body;
+
     const user = await prisma.user.findUnique({ where: { email } });
+
     if (!user) {
       return reply
         .code(ERRORS.userNotExists.statusCode)
@@ -22,6 +24,7 @@ export const login = async (
     }
 
     const checkPass = await utils.compareHash(password, user.password);
+
     if (!checkPass) {
       return reply
         .code(ERRORS.userCredError.statusCode)
@@ -53,13 +56,16 @@ export const signUp = async (
 ) => {
   try {
     const { email, password, username } = request.body;
+
     const user = await prisma.user.findUnique({ where: { email } });
+
     if (user) {
       return reply.code(ERRORS.userExists.statusCode).send(ERRORS.userExists);
     }
 
     const hashPass = await utils.genSalt(10, password);
-    const createUser = await prisma.user.create({
+
+    const createdUser = await prisma.user.create({
       data: {
         email,
         username: username.trim(),
@@ -69,17 +75,17 @@ export const signUp = async (
 
     const token = JWT.sign(
       {
-        id: createUser.id,
-        email: createUser.email,
+        id: createdUser.id,
+        email: createdUser.email,
       },
       process.env.APP_JWT_SECRET as string
     );
 
-    delete createUser.password;
+    delete createdUser.password;
 
     return reply.code(STANDARD.OK.statusCode).send({
       token,
-      user: createUser,
+      user: createdUser,
     });
   } catch (err) {
     return handleServerError(reply, err);

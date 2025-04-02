@@ -17,21 +17,17 @@ const startServer = async () => {
     logger: pino({ level: process.env.LOG_LEVEL }),
   });
 
-  // Register middlewares
   server.register(formbody);
   server.register(cors);
   server.register(helmet);
 
-  // Register routes
   server.register(userRouter, { prefix: '/api/user' });
 
-  // Set error handler
   server.setErrorHandler((error, _request, reply) => {
     server.log.error(error);
     reply.status(500).send({ error: 'Something went wrong' });
   });
 
-  // Health check route
   server.get('/health', async (_request, reply) => {
     try {
       await utils.healthCheck();
@@ -45,12 +41,6 @@ const startServer = async () => {
     }
   });
 
-  // Root route
-  server.get('/', (request, reply) => {
-    reply.status(200).send({ message: 'Hello from fastify boilerplate!' });
-  });
-
-  // Graceful shutdown
   const signals: NodeJS.Signals[] = ['SIGINT', 'SIGTERM'];
   signals.forEach((signal) => {
     process.on(signal, async () => {
@@ -65,7 +55,6 @@ const startServer = async () => {
     });
   });
 
-  // Start server
   try {
     await server.listen({
       port,
@@ -77,7 +66,6 @@ const startServer = async () => {
   }
 };
 
-// Handle unhandled rejections
 process.on('unhandledRejection', (err) => {
   console.error('Unhandled Rejection:', err);
   process.exit(1);
