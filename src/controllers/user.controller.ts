@@ -6,6 +6,31 @@ import { utils } from '../utils';
 import { STANDARD } from '../constants/request';
 import { IUserLoginDto, IUserSignupDto } from '../schemas/User';
 
+export const getUsers = async (
+  _request: FastifyRequest,
+  reply: FastifyReply
+) => {
+  try {
+    const users = await prisma.user.findMany();
+
+    if (!users) {
+      return reply
+        .code(STANDARD.NO_CONTENT.statusCode)
+        .send(STANDARD.NO_CONTENT.message);
+    }
+
+    const sanitizedUsers = users.map((user) => {
+      const { password, ...userWithoutPass } = user;
+
+      return userWithoutPass;
+    });
+
+    return reply.code(STANDARD.ACCEPTED.statusCode).send(sanitizedUsers);
+  } catch (err) {
+    return handleServerError(reply, err);
+  }
+};
+
 export const login = async (
   request: FastifyRequest<{
     Body: IUserLoginDto;
@@ -23,7 +48,7 @@ export const login = async (
         .send(ERRORS.userNotExists.message);
     }
 
-    const checkPass = await utils.compareHash(password, user.password);
+    const checkPass = await utils.compareHash(user.password, password);
 
     if (!checkPass) {
       return reply
@@ -38,6 +63,8 @@ export const login = async (
       },
       process.env.APP_JWT_SECRET as string
     );
+
+    delete user.password;
 
     return reply.code(STANDARD.OK.statusCode).send({
       token,

@@ -32,13 +32,15 @@ export const utils = {
     });
   },
 
-  compareHash: (hash: string, value: string): Promise<boolean> => {
-    return new Promise((resolve, reject) => {
-      bcrypt.compare(value, hash, (err, result) => {
-        if (err) return reject(err);
-        resolve(result);
-      });
-    });
+  compareHash: async (hash: string, value: string): Promise<boolean> => {
+    try {
+      console.log('Plain text password:', value);
+      console.log('Stored hashed password:', hash);
+
+      return await bcrypt.compare(value, hash);
+    } catch (error) {
+      throw new Error(`Error comparing password: ${error.message}`);
+    }
   },
 
   healthCheck: async (): Promise<void> => {

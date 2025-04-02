@@ -4,6 +4,8 @@ import { utils } from '../utils';
 import { loginSchema, signupSchema } from '../schemas/User';
 
 async function userRouter(fastify: FastifyInstance) {
+  fastify.get('/', { config: 'Logging Users' }, controllers.getUsers);
+
   fastify.post(
     '/login',
     {
