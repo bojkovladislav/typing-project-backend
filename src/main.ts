@@ -6,6 +6,9 @@ import { utils } from './utils';
 import formbody from '@fastify/formbody';
 import cors from '@fastify/cors';
 import helmet from '@fastify/helmet';
+import { registerGoogleOAuth2Provider } from '../providers/oauth2';
+import {registerCorsProvider} from "../providers/cors";
+import { googleOAuth2Routes } from '../modules/oauth2/google/google.route';
 
 loadConfig();
 
@@ -17,8 +20,11 @@ const startServer = async () => {
     logger: pino({ level: process.env.LOG_LEVEL }),
   });
 
+  registerGoogleOAuth2Provider(server);
+  registerCorsProvider(server);
+
   server.register(formbody);
-  server.register(cors);
+  server.register(googleOAuth2Routes, { prefix: '/oauth2' });
   server.register(helmet);
 
   server.register(userRouter, { prefix: '/api/user' });
