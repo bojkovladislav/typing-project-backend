@@ -1,6 +1,6 @@
 Backend side for [typing project](https://github.com/bojkovladislav/typing-project)
 
-**#Description:**
+**Description:**
 
 This is the backend API for the Typing Speed App built with **Fastify** and **TypeScript**.  
 It handles core features like user registration, login, authentication with Google/GitHub, and storing user typing data.
