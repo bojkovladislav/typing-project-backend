@@ -4,11 +4,10 @@ import userRouter from './routes/user.router';
 import loadConfig from './config/env.config';
 import { utils } from './utils';
 import formbody from '@fastify/formbody';
-import cors from '@fastify/cors';
 import helmet from '@fastify/helmet';
-import { registerGoogleOAuth2Provider } from '../providers/oauth2';
-import {registerCorsProvider} from "../providers/cors";
-import { googleOAuth2Routes } from '../modules/oauth2/google/google.route';
+import { registerGoogleOAuth2Provider } from './providers/oauth2';
+import { registerCorsProvider } from './providers/cors';
+import { googleOAuth2Routes } from './modules/oauth2/google/google.route';
 
 loadConfig();
 
