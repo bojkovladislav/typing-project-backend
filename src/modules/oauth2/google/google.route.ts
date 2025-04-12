@@ -19,7 +19,7 @@ export function googleOAuth2Routes(
         );
 
       reply.redirect(
-        `http://localhost:5173/?access_token=${token.access_token}`
+        `http://localhost:5173/authorize/?access_token=${token.access_token}`
       );
     }
   );
