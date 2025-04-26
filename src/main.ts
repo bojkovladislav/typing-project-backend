@@ -4,9 +4,11 @@ import loadConfig from './config/env.config';
 import { utils } from './utils';
 import formbody from '@fastify/formbody';
 import helmet from '@fastify/helmet';
-import { registerGoogleOAuth2Provider } from './providers/oauth2';
+import { registerGoogleOAuth2Provider } from './providers/google-oauth2';
 import { registerCorsProvider } from './providers/cors';
 import { googleOAuth2Routes } from './modules/oauth2/google/google.route';
+import { githubOAuth2Routes } from './modules/oauth2/github/github.route';
+import { registerGitHubOAuth2Provider } from './providers/github-oauth2';
 
 loadConfig();
 
@@ -24,10 +26,12 @@ const startServer = async () => {
   });
 
   registerGoogleOAuth2Provider(server);
+  registerGitHubOAuth2Provider(server);
   registerCorsProvider(server);
 
   server.register(formbody);
   server.register(googleOAuth2Routes, { prefix: '/oauth2' });
+  server.register(githubOAuth2Routes, { prefix: '/oauth2' });
   server.register(helmet);
 
   server.register(userRouter, { prefix: '/api/user' });

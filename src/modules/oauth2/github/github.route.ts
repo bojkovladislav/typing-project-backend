@@ -5,21 +5,21 @@ import {
   FastifyRequest,
 } from 'fastify';
 
-export function googleOAuth2Routes(
+export function githubOAuth2Routes(
   server: FastifyInstance,
   options: FastifyPluginOptions,
   done: () => void
 ) {
   server.get(
-    '/google/callback',
+    '/github/callback',
     async function (request: FastifyRequest, reply: FastifyReply) {
       const { token } =
-        await server.GoogleOAuth2.getAccessTokenFromAuthorizationCodeFlow(
+        await server.GitHubOAuth2.getAccessTokenFromAuthorizationCodeFlow(
           request
         );
 
       reply.redirect(
-        `http://localhost:5173/authorize/?google_access_token=${token.access_token}`
+        `http://localhost:5173/authorize/?github_access_token=${token.access_token}`
       );
     }
   );
