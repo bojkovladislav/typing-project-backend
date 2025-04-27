@@ -9,6 +9,7 @@ import { registerCorsProvider } from './providers/cors';
 import { googleOAuth2Routes } from './modules/oauth2/google/google.route';
 import { githubOAuth2Routes } from './modules/oauth2/github/github.route';
 import { registerGitHubOAuth2Provider } from './providers/github-oauth2';
+import { AppError } from './helpers/errors.helper';
 
 loadConfig();
 
@@ -37,8 +38,12 @@ const startServer = async () => {
   server.register(userRouter, { prefix: '/api/user' });
 
   server.setErrorHandler((error, _request, reply) => {
-    server.log.error(error);
-    reply.status(500).send({ error: 'Something went wrong' });
+    if (error instanceof AppError) {
+      return reply.status(error.statusCode).send({ message: error.message });
+    }
+
+    console.error('Unexpected error:', error);
+    return reply.status(500).send({ message: 'Internal Server Error' });
   });
 
   server.get('/health', async (_request, reply) => {

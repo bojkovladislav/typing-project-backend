@@ -43,17 +43,13 @@ export const login = async (
     const user = await prisma.user.findUnique({ where: { email } });
 
     if (!user) {
-      return reply
-        .code(ERRORS.userNotExists.statusCode)
-        .send(ERRORS.userNotExists.message);
+      throw ERRORS.userNotExists;
     }
 
     const checkPass = await utils.compareHash(user.password, password);
 
     if (!checkPass) {
-      return reply
-        .code(ERRORS.userCredError.statusCode)
-        .send(ERRORS.userCredError.message);
+      throw ERRORS.userCredError;
     }
 
     const token = JWT.sign(
@@ -87,7 +83,7 @@ export const signUp = async (
     const user = await prisma.user.findUnique({ where: { email } });
 
     if (user) {
-      return reply.code(ERRORS.userExists.statusCode).send(ERRORS.userExists);
+      throw ERRORS.userExists;
     }
 
     const hashPass = await utils.genSalt(10, password);
