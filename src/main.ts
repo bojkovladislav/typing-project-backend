@@ -37,6 +37,8 @@ const startServer = async () => {
 
   server.register(userRouter, { prefix: '/api/user' });
 
+  server.register(refreshRouter, { prefix: '/app/user/refresh-token' });
+
   server.setErrorHandler((error, _request, reply) => {
     if (error instanceof AppError) {
       return reply.status(error.statusCode).send({ message: error.message });

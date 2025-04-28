@@ -5,6 +5,7 @@ import * as JWT from 'jsonwebtoken';
 import { utils } from '../utils';
 import { STANDARD } from '../constants/request';
 import { IUserLoginDto, IUserSignupDto } from '../schemas/User';
+import { createToken } from 'src/helpers/auth.helper';
 
 export const getUsers = async (
   _request: FastifyRequest,
@@ -52,18 +53,45 @@ export const login = async (
       throw ERRORS.userCredError;
     }
 
-    const token = JWT.sign(
-      {
-        id: user.id,
-        email: user.email,
-      },
-      process.env.APP_JWT_SECRET as string
+    // const token = JWT.sign(
+    //   {
+    //     id: user.id,
+    //     email: user.email,
+    //   },
+    //   process.env.APP_JWT_SECRET as string
+    // );
+
+    const accessToken = createToken(
+      { id: user.id, email: user.email },
+      process.env.APP_JWT_SECRET,
+      '15m'
+    );
+
+    const refreshToken = createToken(
+      { id: user.id, email: user.email },
+      process.env.APP_JWT_REFRESH_SECRET,
+      '7d'
     );
 
     delete user.password;
 
+    reply
+      .setCookie('accessToken', accessToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'strict',
+        path: '/',
+        maxAge: 15 * 60,
+      })
+      .setCookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'strict',
+        path: '/',
+        maxAge: 7 * 24 * 60 * 60,
+      });
+
     return reply.code(STANDARD.OK.statusCode).send({
-      token,
       user,
     });
   } catch (err) {

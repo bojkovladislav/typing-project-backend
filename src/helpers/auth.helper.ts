@@ -1,11 +1,12 @@
 import { utils } from '../utils';
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { prisma } from '../utils';
+import * as JWT from 'jsonwebtoken';
 import { ERRORS } from './errors.helper';
 
 export const checkValidRequest = (
   request: FastifyRequest,
-  reply: FastifyReply,
+  reply: FastifyReply
 ) => {
   const token = utils.getTokenFromHeader(request.headers.authorization);
   if (!token) {
@@ -24,7 +25,7 @@ export const checkValidRequest = (
 
 export const checkValidUser = async (
   request: FastifyRequest,
-  reply: FastifyReply,
+  reply: FastifyReply
 ) => {
   const token = utils.getTokenFromHeader(request.headers.authorization);
   if (!token) {
@@ -56,4 +57,16 @@ export const checkValidUser = async (
       .code(ERRORS.unauthorizedAccess.statusCode)
       .send(ERRORS.unauthorizedAccess.message);
   }
+};
+
+export const createToken = <T extends object>(
+  credentials: T,
+  secret: string,
+  expiresIn: string
+) => {
+  return JWT.sign({ ...credentials }, secret, { expiresIn });
+};
+
+export const verifyToken = (token: string) => {
+  return JWT.verify(token, process.env.APP_JWT_REFRESH_SECRET as string);
 };
