@@ -16,7 +16,7 @@ export const refreshRouter = async (
     const payload = verifyToken(token);
 
     const newAccessToken = createToken(
-      payload,
+      payload as object,
       process.env.APP_JWT_SECRET,
       '15m'
     );

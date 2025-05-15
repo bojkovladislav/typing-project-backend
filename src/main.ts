@@ -10,6 +10,8 @@ import { googleOAuth2Routes } from './modules/oauth2/google/google.route';
 import { githubOAuth2Routes } from './modules/oauth2/github/github.route';
 import { registerGitHubOAuth2Provider } from './providers/github-oauth2';
 import { AppError } from './helpers/errors.helper';
+import { refreshRouter } from './routes/refresh.router';
+// import fastifyCookie from '@fastify/cookie';
 
 loadConfig();
 
@@ -34,10 +36,13 @@ const startServer = async () => {
   server.register(googleOAuth2Routes, { prefix: '/oauth2' });
   server.register(githubOAuth2Routes, { prefix: '/oauth2' });
   server.register(helmet);
+  // server.register(fastifyCookie, {
+  //   secret: process.env.COOKIE_SECRET,
+  // });
 
   server.register(userRouter, { prefix: '/api/user' });
 
-  server.register(refreshRouter, { prefix: '/app/user/refresh-token' });
+  // server.register(refreshRouter, { prefix: '/app/user/refresh-token' });
 
   server.setErrorHandler((error, _request, reply) => {
     if (error instanceof AppError) {

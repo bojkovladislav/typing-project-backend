@@ -5,7 +5,7 @@ import * as JWT from 'jsonwebtoken';
 import { utils } from '../utils';
 import { STANDARD } from '../constants/request';
 import { IUserLoginDto, IUserSignupDto } from '../schemas/User';
-import { createToken } from 'src/helpers/auth.helper';
+import { createToken } from '../helpers/auth.helper';
 
 export const getUsers = async (
   _request: FastifyRequest,
